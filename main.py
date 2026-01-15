@@ -4,8 +4,8 @@ from Xlib import X, XK
 dpy = Display()
 screen = dpy.screen()
 root = screen.root
-root.grab_key(dpy.keysym_to_keycode(XK.string_to_keysym("z")),X.Mod4Mask,1,X.GrabModeAsync,X.GrabModeAsync)
-root.grab_key(dpy.keysym_to_keycode(XK.string_to_keysym("q")),X.Mod4Mask,X.ShiftMask,1,X.GrabModeAsync,X.GrabModeAsync)
+root.grab_key(dpy.keysym_to_keycode(XK.string_to_keysym("z")),X.Mod4Mask|X.Mod2Mask,1,X.GrabModeAsync,X.GrabModeAsync)
+root.grab_key(dpy.keysym_to_keycode(XK.string_to_keysym("q")),X.Mod4Mask|X.Mod2Mask,X.ShiftMask,1,X.GrabModeAsync,X.GrabModeAsync)
 
 def call_rofi():
     if ev.type==X.KeyPress:
