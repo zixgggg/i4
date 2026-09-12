@@ -6,7 +6,7 @@ root=screen.root
 screen.root.grab_key(dpy.keysym_to_keycode(XK.string_to_keysym("q")),X.Mod4Mask,1,X.GrabModeAsync, X.GrabModeAsync)
 screen.root.grab_key(dpy.keysym_to_keycode(XK.string_to_keysym("r")),X.Mod4Mask,1,X.GrabModeAsync, X.GrabModeAsync)
 screen.root.grab_button(X.Button1,X.Mod4Mask,True,X.ButtonPressMask| X.ButtonReleaseMask| X.PointerMotionMask,X.GrabModeAsync,X.GrabModeAsync,X.NONE,X.NONE,)
-#screen.root.grab_button(X.Button3,X.Mod4Mask,True,X.ButtonPressMask| X.ButtonReleaseMask| X.PointerMotionMask,X.GrabModeAsync,X.GrabModeAsync,X.NONE,X.NONE,)
+screen.root.grab_button(X.Button3,X.Mod4Mask,True,X.ButtonPressMask| X.ButtonReleaseMask| X.PointerMotionMask,X.GrabModeAsync,X.GrabModeAsync,X.NONE,X.NONE,)
 font = dpy.open_font('cursor')           # 開啟 cursor 字型
 cursor = font.create_glyph_cursor(
     font,                                # mask 用同一個 font
@@ -31,16 +31,36 @@ while True:
     """
     if event.type==X.ButtonPress and event.child!=X.NONE:
         status=event
-        win_origin_x=event.child.get_geometry().x#視窗原本的x
-        win_origin_y=event.child.get_geometry().y#視窗原本的y
-        mc_origin_x=event.root_x#滑鼠原本的x
-        mc_origin_y=event.root_y#滑鼠原本的y
+        #滑鼠原本的xy
+        mc_origin_x=event.root_x
+        mc_origin_y=event.root_y
+        
+        if status.detail==X.Button1:
+            #視窗原本的xy
+            win_origin_x=event.child.get_geometry().x
+            win_origin_y=event.child.get_geometry().y
+        elif status.detail==X.Button3:
+            #視窗原本的寬高
+            win_origin_width=event.child.get_geometry().width
+            win_origin_height=event.child.get_geometry().height
     elif event.type==X.MotionNotify and status!=None:
-        moved_x=event.root_x#滑鼠移動後的x
-        moved_y=event.root_y#滑鼠移動後的y
-        move_x=moved_x-mc_origin_x#x移動多少
-        move_y=moved_y-mc_origin_y#y移動多少
-        status.child.configure(x=win_origin_x+move_x,y=win_origin_y+move_y)#視窗原本的位置+要移動多少
+        #滑鼠移動後的xy
+        moved_x=event.root_x
+        moved_y=event.root_y
+        
+        #滑鼠了xy移動多少
+        move_x=moved_x-mc_origin_x
+        move_y=moved_y-mc_origin_y
+        if status.detail==X.Button1:
+            status.child.configure(x=win_origin_x+move_x,#視窗原本的位置+滑鼠移動了多少（也就是要移動多少）
+                                   y=win_origin_y+move_y)
+        elif status.detail==X.Button3:
+            #最小視窗寬高常數（最小為1）,根據PEP8規定常數名為全大寫,用底線分隔
+            MIN_WIN_WIDTH=50
+            MIN_WIN_HEIGHT=50
+            
+            status.child.configure(width=max(win_origin_width+move_x,MIN_WIN_WIDTH),#視窗原本的大小+滑鼠移動了多少,max()避免視窗大小小於最小視窗寬高常數
+                                   height=max(win_origin_height+move_y,MIN_WIN_HEIGHT))
         dpy.flush()
     elif event.type==X.ButtonRelease:
         status=None
@@ -49,10 +69,12 @@ while True:
             print(f"kill client:{event.child.get_wm_name()}")
             event.child.kill_client()
             #event.child是滑鼠底下的視窗
+        '''
         elif event.detail==r_code:
             print(f"moving window:{event.child.get_wm_name()}")
             
             event.child.configure(x=100,y=100,width=200,height=300,border_width=100)
             #configure(x,y,width,height)
+        '''
         dpy.flush()
 #記得關num lock
