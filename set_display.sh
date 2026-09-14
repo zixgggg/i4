@@ -1,6 +1,6 @@
-echo -n "display before set: "
-echo $DISPLAY
-#Xephyr :1
-DISPLAY=:1
-echo -n "display now: "
-echo $DISPLAY
+echo "display before set: $DISPLAY"
+export DISPLAY=:1
+echo "display now: $DISPLAY"
+#source or .
+#source ./set_display.sh
+#. ./set_display.sh
