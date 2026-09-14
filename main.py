@@ -58,10 +58,9 @@ while True:
             #最小視窗寬高常數（最小為1）,根據PEP8規定常數名為全大寫,用底線分隔
             MIN_WIN_WIDTH=50
             MIN_WIN_HEIGHT=50
-            
+
             status.child.configure(width=max(win_origin_width+move_x,MIN_WIN_WIDTH),#視窗原本的大小+滑鼠移動了多少,max()避免視窗大小小於最小視窗寬高常數
                                    height=max(win_origin_height+move_y,MIN_WIN_HEIGHT))
-        dpy.flush()
     elif event.type==X.ButtonRelease:
         status=None
     elif event.type==X.KeyPress and event.child!= X.NONE:
@@ -69,12 +68,6 @@ while True:
             print(f"kill client:{event.child.get_wm_name()}")
             event.child.kill_client()
             #event.child是滑鼠底下的視窗
-        '''
-        elif event.detail==r_code:
-            print(f"moving window:{event.child.get_wm_name()}")
-            
-            event.child.configure(x=100,y=100,width=200,height=300,border_width=100)
-            #configure(x,y,width,height)
-        '''
-        dpy.flush()
+        
+    dpy.flush()
 #記得關num lock
