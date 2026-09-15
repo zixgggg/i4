@@ -2,9 +2,11 @@ from Xlib import display,X,XK,xobject,Xcursorfont
 dpy=display.Display()
 screen=dpy.screen()
 root=screen.root
+q_code=dpy.keysym_to_keycode(XK.string_to_keysym("q"))
+r_code=dpy.keysym_to_keycode(XK.string_to_keysym("r"))
 #註冊事件
-screen.root.grab_key(dpy.keysym_to_keycode(XK.string_to_keysym("q")),X.Mod4Mask,1,X.GrabModeAsync, X.GrabModeAsync)
-screen.root.grab_key(dpy.keysym_to_keycode(XK.string_to_keysym("r")),X.Mod4Mask,1,X.GrabModeAsync, X.GrabModeAsync)
+screen.root.grab_key(q_code,X.Mod4Mask,1,X.GrabModeAsync, X.GrabModeAsync)
+screen.root.grab_key(r_code,X.Mod4Mask,1,X.GrabModeAsync, X.GrabModeAsync)
 screen.root.grab_button(X.Button1,X.Mod4Mask,True,X.ButtonPressMask| X.ButtonReleaseMask| X.PointerMotionMask,X.GrabModeAsync,X.GrabModeAsync,X.NONE,X.NONE,)
 screen.root.grab_button(X.Button3,X.Mod4Mask,True,X.ButtonPressMask| X.ButtonReleaseMask| X.PointerMotionMask,X.GrabModeAsync,X.GrabModeAsync,X.NONE,X.NONE,)
 font = dpy.open_font('cursor')           # 開啟 cursor 字型
@@ -17,10 +19,8 @@ cursor = font.create_glyph_cursor(
     (65535, 65535, 65535)                # 背景色 RGB（白色）
 )
 
+red = screen.default_colormap.alloc_named_color("red").pixel
 root.change_attributes(cursor=cursor)
-q_code=dpy.keysym_to_keycode(XK.string_to_keysym("q"))
-r_code=dpy.keysym_to_keycode(XK.string_to_keysym("r"))
-
 status=None
 while True:
     event=dpy.next_event()
@@ -30,6 +30,8 @@ while True:
         print(dpy.get_input_focus())
     """
     if event.type==X.ButtonPress and event.child!=X.NONE:
+        event.child.change_attributes(border_pixel=red)
+        event.child.configure(border_width=10)
         status=event
         #滑鼠原本的xy
         mc_origin_x=event.root_x
@@ -61,7 +63,8 @@ while True:
 
             status.child.configure(width=max(win_origin_width+move_x,MIN_WIN_WIDTH),#視窗原本的大小+滑鼠移動了多少,max()避免視窗大小小於最小視窗寬高常數
                                    height=max(win_origin_height+move_y,MIN_WIN_HEIGHT))
-    elif event.type==X.ButtonRelease:
+    elif event.type==X.ButtonRelease and event.child!=X.NONE:
+        event.child.configure(border_width=0)
         status=None
     elif event.type==X.KeyPress and event.child!= X.NONE:
         if event.detail==q_code:
