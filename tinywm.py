@@ -33,3 +33,4 @@ while 1:
             height = max(1, attr.height + (start.detail == 3 and ydiff or 0)))
     elif ev.type == X.ButtonRelease:
         start = None
+
