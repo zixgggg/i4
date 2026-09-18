@@ -3,11 +3,40 @@ dpy=display.Display()
 screen=dpy.screen()
 root=screen.root
 q_code=dpy.keysym_to_keycode(XK.string_to_keysym("q"))
-r_code=dpy.keysym_to_keycode(XK.string_to_keysym("r"))
+one_code=dpy.keysym_to_keycode(XK.string_to_keysym("1"))
+two_code=dpy.keysym_to_keycode(XK.string_to_keysym("2"))
+three_code=dpy.keysym_to_keycode(XK.string_to_keysym("3"))
+four_code=dpy.keysym_to_keycode(XK.string_to_keysym("4"))
+five_code=dpy.keysym_to_keycode(XK.string_to_keysym("5"))
+six_code=dpy.keysym_to_keycode(XK.string_to_keysym("6"))
+seven_code=dpy.keysym_to_keycode(XK.string_to_keysym("7"))
+eight_code=dpy.keysym_to_keycode(XK.string_to_keysym("8"))
+nine_code=dpy.keysym_to_keycode(XK.string_to_keysym("9"))
+ten_code=dpy.keysym_to_keycode(XK.string_to_keysym("0"))
 #註冊事件
+screen.root.grab_key(q_code,X.Mod4Mask|X.Mod2Mask|X.LockMask,1,X.GrabModeAsync, X.GrabModeAsync)
+screen.root.grab_key(q_code,X.Mod4Mask|X.LockMask,1,X.GrabModeAsync, X.GrabModeAsync)
+screen.root.grab_key(q_code,X.Mod4Mask|X.Mod2Mask,1,X.GrabModeAsync, X.GrabModeAsync)
 screen.root.grab_key(q_code,X.Mod4Mask,1,X.GrabModeAsync, X.GrabModeAsync)
-screen.root.grab_key(r_code,X.Mod4Mask,1,X.GrabModeAsync, X.GrabModeAsync)
+
+screen.root.grab_key(one_code,X.Mod4Mask,1,X.GrabModeAsync, X.GrabModeAsync)
+screen.root.grab_key(two_code,X.Mod4Mask,1,X.GrabModeAsync, X.GrabModeAsync)
+screen.root.grab_key(three_code,X.Mod4Mask,1,X.GrabModeAsync, X.GrabModeAsync)
+screen.root.grab_key(four_code,X.Mod4Mask,1,X.GrabModeAsync, X.GrabModeAsync)
+screen.root.grab_key(five_code,X.Mod4Mask,1,X.GrabModeAsync, X.GrabModeAsync)
+screen.root.grab_key(six_code,X.Mod4Mask,1,X.GrabModeAsync, X.GrabModeAsync)
+screen.root.grab_key(seven_code,X.Mod4Mask,1,X.GrabModeAsync, X.GrabModeAsync)
+screen.root.grab_key(eight_code,X.Mod4Mask,1,X.GrabModeAsync, X.GrabModeAsync)
+screen.root.grab_key(nine_code,X.Mod4Mask,1,X.GrabModeAsync, X.GrabModeAsync)
+screen.root.grab_key(ten_code,X.Mod4Mask,1,X.GrabModeAsync, X.GrabModeAsync)
+screen.root.grab_button(X.Button1,X.Mod4Mask|X.Mod2Mask|X.LockMask,True,X.ButtonPressMask| X.ButtonReleaseMask| X.PointerMotionMask,X.GrabModeAsync,X.GrabModeAsync,X.NONE,X.NONE,)
+screen.root.grab_button(X.Button1,X.Mod4Mask|X.LockMask,True,X.ButtonPressMask| X.ButtonReleaseMask| X.PointerMotionMask,X.GrabModeAsync,X.GrabModeAsync,X.NONE,X.NONE,)
+screen.root.grab_button(X.Button1,X.Mod4Mask|X.Mod2Mask,True,X.ButtonPressMask| X.ButtonReleaseMask| X.PointerMotionMask,X.GrabModeAsync,X.GrabModeAsync,X.NONE,X.NONE,)
 screen.root.grab_button(X.Button1,X.Mod4Mask,True,X.ButtonPressMask| X.ButtonReleaseMask| X.PointerMotionMask,X.GrabModeAsync,X.GrabModeAsync,X.NONE,X.NONE,)
+
+screen.root.grab_button(X.Button3,X.Mod4Mask|X.Mod2Mask|X.LockMask,True,X.ButtonPressMask| X.ButtonReleaseMask| X.PointerMotionMask,X.GrabModeAsync,X.GrabModeAsync,X.NONE,X.NONE,)
+screen.root.grab_button(X.Button3,X.Mod4Mask|X.LockMask,True,X.ButtonPressMask| X.ButtonReleaseMask| X.PointerMotionMask,X.GrabModeAsync,X.GrabModeAsync,X.NONE,X.NONE,)
+screen.root.grab_button(X.Button3,X.Mod4Mask|X.Mod2Mask,True,X.ButtonPressMask| X.ButtonReleaseMask| X.PointerMotionMask,X.GrabModeAsync,X.GrabModeAsync,X.NONE,X.NONE,)
 screen.root.grab_button(X.Button3,X.Mod4Mask,True,X.ButtonPressMask| X.ButtonReleaseMask| X.PointerMotionMask,X.GrabModeAsync,X.GrabModeAsync,X.NONE,X.NONE,)
 font = dpy.open_font('cursor')           # 開啟 cursor 字型
 cursor = font.create_glyph_cursor(
@@ -27,6 +56,8 @@ root.change_attributes(
 )
 status=None
 focused_win=None
+#current_workspace=0
+#workspace={"1":[],}
 while True:
     event=dpy.next_event()
     if event.type==X.ButtonPress and event.child!=X.NONE:
@@ -74,6 +105,9 @@ while True:
             print(f"kill client:{event.child.get_wm_name()}")
             event.child.kill_client()
             #event.child是滑鼠底下的視窗
+    #elif event.type==X.KeyPress:
+    #    if event.detail==1_code:
+            
     elif event.type==X.MapRequest:
         window=event.window
         window.change_attributes(
@@ -81,6 +115,7 @@ while True:
             event_mask=X.EnterWindowMask|X.LeaveWindowMask
         )
         window.configure(border_width=3)
+        #workspace[current_workspace].append(window)
         window.map()
     elif event.type==X.EnterNotify:
         focus_win=event.window#要聚焦的視窗
@@ -95,4 +130,3 @@ while True:
     #elif event.type==X.LeaveNotify:
     #    event.window.change_attributes(border_pixel=red)
     dpy.flush()
-#記得關num lock
