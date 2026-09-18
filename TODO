@@ -1,0 +1,9 @@
+todo{
+	workspace
+}
+
+done{
+	move ,resize window
+	kill window
+	focus window
+}
