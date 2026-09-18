@@ -100,11 +100,6 @@ while True:
     elif event.type==X.ButtonRelease and event.child!=X.NONE:
         #event.child.change_attributes(border_pixel=red)
         status=None
-    elif event.type==X.KeyPress and event.child!= X.NONE:
-        if event.detail==q_code:
-            print(f"kill client:{event.child.get_wm_name()}")
-            event.child.kill_client()
-            #event.child是滑鼠底下的視窗
     #elif event.type==X.KeyPress:
     #    if event.detail==1_code:
             
@@ -126,7 +121,13 @@ while True:
             X.CurrentTime
         )
         focus_win.change_attributes(border_pixel=green)#把視窗邊框變色
-        focused_win=focus_win
+        focused_win=focus_win#最後聚焦的視窗
+    elif event.type==X.KeyPress:
+        if event.detail==q_code and focused_win!=None:
+            print(f"kill client:{focused_win.get_wm_name()}")
+            focused_win.kill_client()
+            #event.child.kill_client()
+            #event.child是滑鼠底下的視窗
     #elif event.type==X.LeaveNotify:
     #    event.window.change_attributes(border_pixel=red)
     dpy.flush()
