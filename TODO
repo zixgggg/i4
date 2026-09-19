@@ -1,5 +1,7 @@
 todo{
 	workspace
+	let rofi -show window can use in it
+	let bar(sigmabar,lemonbar) can use in it
 }
 
 done{
