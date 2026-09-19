@@ -1,4 +1,5 @@
 from Xlib import display,X,XK,xobject,Xcursorfont
+from Xlib.protocol import event as xevent
 dpy=display.Display()
 screen=dpy.screen()
 root=screen.root
@@ -124,9 +125,25 @@ while True:
         focused_win=focus_win#最後聚焦的視窗
     elif event.type==X.KeyPress:
         if event.detail==q_code and focused_win!=None:
-            print(f"kill client:{focused_win.get_wm_name()}")
-            focused_win.kill_client()
-            #event.child.kill_client()
+            #print(f"kill client:{focused_win.get_wm_name()}")
+            #focused_win.kill_client()
+            
+            win_support_p=focused_win.get_wm_protocols()
+            WM_PROTOCOLS = dpy.intern_atom("WM_PROTOCOLS")
+            WM_DELETE_WINDOW = dpy.intern_atom("WM_DELETE_WINDOW")
+            if WM_DELETE_WINDOW in win_support_p:
+                print(f"{focused_win.get_wm_name()} support WM_DELETE_WINDOW")
+                cm = xevent.ClientMessage(
+                    window = focused_win,
+                    client_type = WM_PROTOCOLS,
+                    data = (32, [WM_DELETE_WINDOW, X.CurrentTime, 0, 0, 0])
+                )
+                focused_win.send_event(cm,event_mask=0, propagate=False)
+                focused_win=None
+            else:
+                print(f"{focused_win.get_wm_name()} unsupport WM_DELETE_WINDOW,excute kill_client()")
+                focused_win.kill_client()
+                focused_win=None
             #event.child是滑鼠底下的視窗
     #elif event.type==X.LeaveNotify:
     #    event.window.change_attributes(border_pixel=red)
