@@ -122,6 +122,7 @@ while True:
             X.CurrentTime
         )
         focus_win.change_attributes(border_pixel=green)#把視窗邊框變色
+        focus_win.configure(stack_mode=X.Above)
         focused_win=focus_win#最後聚焦的視窗
     elif event.type==X.KeyPress:
         if event.detail==q_code and focused_win!=None:
